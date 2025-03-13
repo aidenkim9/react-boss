@@ -5,10 +5,10 @@ import {
   Link,
   useMatch,
 } from "react-router-dom";
-import { useState, useEffect } from "react";
 import styled from "styled-components";
-import { fetchCoinInfo, fetchPriceData, fetchCoins } from "../api";
+import { fetchCoinInfo, fetchPriceData } from "../api";
 import { useQuery } from "@tanstack/react-query";
+import { Helmet } from "react-helmet";
 
 const Container = styled.div`
   padding: 20px;
@@ -59,14 +59,14 @@ const Tabs = styled.div`
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 `;
-const Tab = styled.span<{ isActive: boolean }>`
+const Tab = styled.span<{ isactive: boolean }>`
   text-align: center;
   font-size: 14px;
   text-transform: uppercase;
   font-weight: 700;
   border-radius: 15px;
   color: ${(props) =>
-    props.isActive ? props.theme.accentColor : props.theme.textColor};
+    props.isactive ? props.theme.accentColor : props.theme.textColor};
   background-color: #171c23;
   a {
     display: block;
@@ -153,6 +153,7 @@ function Coin() {
   const { isLoading: infoLoading, data: infoData } = useQuery<infoData>({
     queryKey: ["info", coinId],
     queryFn: () => fetchCoinInfo(coinId),
+    refetchInterval: 5000,
   });
   const { isLoading: tickersLoading, data: tickersData } = useQuery<priceData>({
     queryKey: ["tickers", coinId],
@@ -163,6 +164,11 @@ function Coin() {
 
   return (
     <Container>
+      <Helmet>
+        <title>
+          {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
+        </title>
+      </Helmet>
       <Header>
         <Title>
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
@@ -182,8 +188,8 @@ function Coin() {
               <span>{infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>OPEN SOURCE:</span>
-              <span>{String(infoData?.open_source)}</span>
+              <span>PRICE:</span>
+              <span>{String(tickersData?.quotes.USD.price)}</span>
             </OverviewItem>
           </Overview>
           <P>{infoData?.description}</P>
@@ -198,15 +204,14 @@ function Coin() {
             </OverviewItem>
           </Overview>
           <Tabs>
-            <Tab isActive={chartMatch !== null}>
+            <Tab isactive={chartMatch !== null}>
               <Link to={`/${coinId}/chart`}>Chart</Link>
             </Tab>
-            <Tab isActive={priceMatch !== null}>
+            <Tab isactive={priceMatch !== null}>
               <Link to={`/${coinId}/price`}>Price</Link>
             </Tab>
           </Tabs>
-
-          <Outlet />
+          <Outlet context={{ coinId: coinId }} />
         </>
       )}
     </Container>
