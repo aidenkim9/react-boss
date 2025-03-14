@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { fetchCoins } from "../api";
 import { useQuery } from "@tanstack/react-query";
 import Helmet from "react-helmet";
+import { useSetRecoilState } from "recoil";
+import { isDarkAtom } from "../atoms";
 
 const Container = styled.div`
   padding: 20px;
@@ -22,7 +24,7 @@ const Header = styled.header`
 const CoinList = styled.ul``;
 const Coin = styled.li`
   background-color: white;
-  color: ${(props) => props.theme.textColor};
+  color: ${(props) => props.theme.bgColor};
   margin-bottom: 10px;
 
   border-radius: 10px;
@@ -64,6 +66,7 @@ function Coins() {
     queryKey: ["allCoins"],
     queryFn: fetchCoins,
   });
+  const setDarkAtom = useSetRecoilState(isDarkAtom);
   return (
     <Container>
       <Helmet>
@@ -71,6 +74,9 @@ function Coins() {
       </Helmet>
       <Header>
         <Title>코인</Title>
+        <button onClick={() => setDarkAtom((current) => !current)}>
+          Change Mode
+        </button>
       </Header>
       {isLoading ? (
         <Loader>Loading...</Loader>
