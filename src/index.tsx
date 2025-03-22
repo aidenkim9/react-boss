@@ -58,8 +58,8 @@ table {
 }
 body {
   font-family: "Source Sans 3", sans-serif;
-  background-color: ${(props) => props.theme.bgColor};
-  color: ${(props) => props.theme.textColor}
+
+  color: black
 }
 a {
   text-decoration: none;
@@ -71,14 +71,12 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
-  <React.StrictMode>
-    <RecoilRoot>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider theme={theme}>
-          <GlobalStyle />
-          <App />
-        </ThemeProvider>
-      </QueryClientProvider>
-    </RecoilRoot>
-  </React.StrictMode>
+  <RecoilRoot>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={theme}>
+        <GlobalStyle />
+        <App />
+      </ThemeProvider>
+    </QueryClientProvider>
+  </RecoilRoot>
 );
